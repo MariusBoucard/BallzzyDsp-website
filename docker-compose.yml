@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  frontend:
+    build: .
+    ports:
+      - "8080:3000"
+    environment:
+      NITRO_PORT: 3000
+      NUXT_STRAPI_URL: http://strapi:1337/api        # SSR: Docker internal
+      NUXT_PUBLIC_STRAPI_URL: http://localhost:1337/api  # Browser: your machine
+    depends_on:
+      - strapi
+    networks:
+      - app-network
+
+  strapi:
+    build:
+      context: ./BallzzyDspCMS
+    env_file:
+      - ./BallzzyDspCMS/.env
+    ports:
+      - "1337:1337"
+    volumes:
+      - ./BallzzyDspCMS/data:/app/data
+    environment:
+      DATABASE_FILENAME: /app/data/data.db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

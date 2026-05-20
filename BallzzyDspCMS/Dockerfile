@@ -1,53 +1,19 @@
-# Build stage
-FROM node:20-alpine as builder
+FROM node:22-alpine
+# Installing libvips-dev for sharp compatibility
+RUN apk update && apk add --no-cache build-base gcc autoconf automake zlib-dev libpng-dev bash vips-dev git
+ARG NODE_ENV=development
+ENV NODE_ENV=${NODE_ENV}
 
-WORKDIR /app
+WORKDIR /opt/
+COPY package.json package-lock.json ./
+RUN npm install
+RUN npm install -g node-gyp
+RUN npm config set fetch-retry-maxtimeout 600000 -g && npm ci
+ENV PATH=/opt/node_modules/.bin:$PATH
 
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm ci
-
-# Copy source code
+WORKDIR /opt/app
 COPY . .
-
-# Build Strapi
-RUN npm run build
-
-# Production stage
-FROM node:20-alpine
-
-WORKDIR /app
-
-# Install dumb-init to handle signals properly
-RUN apk add --no-cache dumb-init
-
-# Copy package files from builder
-COPY package*.json ./
-
-# Install only production dependencies
-RUN npm ci --only=production
-
-# Copy built app from builder
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/public ./public
-
-# Create directory for uploads (if needed)
-RUN mkdir -p /app/public/uploads
-
-# Expose port
+RUN chown -R node:node /opt/app
+USER node
 EXPOSE 1337
-
-# Set environment to production
-ENV NODE_ENV=production
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:1337/admin', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
-
-# Use dumb-init to handle signals
-ENTRYPOINT ["/sbin/dumb-init", "--"]
-
-# Start Strapi
-CMD ["npm", "start"]
+CMD ["npm", "run", "develop"]

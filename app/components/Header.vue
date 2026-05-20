@@ -2,7 +2,7 @@
   <header class="header">
     <div class="header-container">
       <div class="logo">
-        <h1>Ballzzy DSP</h1>
+        <h1>Ballzzy DSPfdsfdsfsd</h1>
         <p class="tagline">Audio Plugins & Projects</p>
       </div>
       <nav class="nav">

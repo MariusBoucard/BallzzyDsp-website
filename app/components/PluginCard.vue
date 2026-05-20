@@ -51,7 +51,7 @@ defineProps<{
 
 const getImageUrl = (image: any) => {
   if (!image) return '';
-  if (image.url) return `http://localhost:3000${image.url}`;
+  if (image.url) return `http://strapi:3000${image.url}`;
   return image;
 };
 

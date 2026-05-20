@@ -1,6 +1,7 @@
-const STRAPI_URL = 'http://localhost:3000/api';
 
 export const useStrapi = () => {
+  const config = useRuntimeConfig();
+  const STRAPI_URL = config.public.strapiUrl;
   const fetchPlugins = async () => {
     try {
       const response = await fetch(`${STRAPI_URL}/plugins?populate=*`);
