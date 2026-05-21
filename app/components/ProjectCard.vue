@@ -1,35 +1,38 @@
 <template>
-  <div class="project-card">
-    <div v-if="project.image" class="project-image">
-      <img :src="getImageUrl(project.image)" :alt="project.editor" />
-    </div>
-    
-    <div class="project-content">
-      <h3>{{ project.editor }}</h3>
-      <p class="type">Electron App</p>
-      <p class="description">{{ project.description }}</p>
+  <NuxtLink :to="`/projects/${project.id}`" class="project-card-link">
+    <div class="project-card">
+      <div v-if="project.image" class="project-image">
+        <img :src="getImageUrl(project.image)" :alt="project.editor" />
+      </div>
       
-      <div class="meta">
-        <span v-if="project.version" class="meta-item">v{{ project.version }}</span>
-        <span v-if="project.releaseDate" class="meta-item">{{ formatDate(project.releaseDate) }}</span>
-      </div>
+      <div class="project-content">
+        <h3>{{ project.editor }}</h3>
+        <p class="type">Electron App</p>
+        <p class="description">{{ project.description }}</p>
+        
+        <div class="meta">
+          <span v-if="project.version" class="meta-item">v{{ project.version }}</span>
+          <span v-if="project.releaseDate" class="meta-item">{{ formatDate(project.releaseDate) }}</span>
+        </div>
 
-      <div v-if="project.formats && project.formats.length" class="formats">
-        <span v-for="format in project.formats" :key="format" class="format-tag">
-          {{ format }}
-        </span>
-      </div>
+        <div v-if="project.formats && project.formats.length" class="formats">
+          <span v-for="format in project.formats" :key="format" class="format-tag">
+            {{ format }}
+          </span>
+        </div>
 
-      <div class="actions">
-        <a v-if="project.downloadLink" :href="project.downloadLink" class="btn-link">Download</a>
-        <a v-if="project.githubRepo" :href="project.githubRepo" class="btn-link" target="_blank">
-          GitHub
-        </a>
-      </div>
+        <div class="actions">
+          <span class="btn-link view-details">View Details</span>
+          <a v-if="project.downloadLink" :href="project.downloadLink" @click.stop class="btn-link">Download</a>
+          <a v-if="project.githubRepo" :href="project.githubRepo" class="btn-link" target="_blank" @click.stop>
+            GitHub
+          </a>
+        </div>
 
-      <p v-if="project.license" class="license">{{ project.license }}</p>
+        <p v-if="project.license" class="license">{{ project.license }}</p>
+      </div>
     </div>
-  </div>
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">
@@ -66,6 +69,12 @@ const formatDate = (date: string) => {
 </script>
 
 <style scoped>
+.project-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .project-card {
   border: 1px solid #e5e7eb;
   border-radius: 8px;
@@ -159,10 +168,16 @@ const formatDate = (date: string) => {
   border-radius: 4px;
   font-size: 0.875rem;
   transition: background 0.2s;
+  border: none;
+  cursor: pointer;
 }
 
 .btn-link:hover {
   background: #059669;
+}
+
+.view-details {
+  background: #10b981;
 }
 
 .license {

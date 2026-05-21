@@ -1,34 +1,37 @@
 <template>
-  <div class="plugin-card">
-    <div v-if="plugin.image" class="plugin-image">
-      <img :src="getImageUrl(plugin.image)" :alt="plugin.editor" />
-    </div>
-    
-    <div class="plugin-content">
-      <h3>{{ plugin.editor }}</h3>
-      <p class="description">{{ plugin.description }}</p>
+  <NuxtLink :to="`/plugins/${plugin.id}`" class="plugin-card-link">
+    <div class="plugin-card">
+      <div v-if="plugin.image" class="plugin-image">
+        <img :src="getImageUrl(plugin.image)" :alt="plugin.editor" />
+      </div>
       
-      <div class="meta">
-        <span v-if="plugin.version" class="meta-item">v{{ plugin.version }}</span>
-        <span v-if="plugin.releaseDate" class="meta-item">{{ formatDate(plugin.releaseDate) }}</span>
-      </div>
+      <div class="plugin-content">
+        <h3>{{ plugin.editor }}</h3>
+        <p class="description">{{ plugin.description }}</p>
+        
+        <div class="meta">
+          <span v-if="plugin.version" class="meta-item">v{{ plugin.version }}</span>
+          <span v-if="plugin.releaseDate" class="meta-item">{{ formatDate(plugin.releaseDate) }}</span>
+        </div>
 
-      <div v-if="plugin.formats && plugin.formats.length" class="formats">
-        <span v-for="format in plugin.formats" :key="format" class="format-tag">
-          {{ format }}
-        </span>
-      </div>
+        <div v-if="plugin.formats && plugin.formats.length" class="formats">
+          <span v-for="format in plugin.formats" :key="format" class="format-tag">
+            {{ format }}
+          </span>
+        </div>
 
-      <div class="actions">
-        <a v-if="plugin.downloadLink" :href="plugin.downloadLink" class="btn-link">Download</a>
-        <a v-if="plugin.githubRepo" :href="plugin.githubRepo" class="btn-link" target="_blank">
-          GitHub
-        </a>
-      </div>
+        <div class="actions">
+          <span class="btn-link view-details">View Details</span>
+          <a v-if="plugin.downloadLink" :href="plugin.downloadLink" @click.stop class="btn-link">Download</a>
+          <a v-if="plugin.githubRepo" :href="plugin.githubRepo" class="btn-link" target="_blank" @click.stop>
+            GitHub
+          </a>
+        </div>
 
-      <p v-if="plugin.license" class="license">{{ plugin.license }}</p>
+        <p v-if="plugin.license" class="license">{{ plugin.license }}</p>
+      </div>
     </div>
-  </div>
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">
@@ -65,6 +68,12 @@ const formatDate = (date: string) => {
 </script>
 
 <style scoped>
+.plugin-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .plugin-card {
   border: 1px solid #e5e7eb;
   border-radius: 8px;
@@ -150,10 +159,16 @@ const formatDate = (date: string) => {
   border-radius: 4px;
   font-size: 0.875rem;
   transition: background 0.2s;
+  border: none;
+  cursor: pointer;
 }
 
 .btn-link:hover {
   background: #2563eb;
+}
+
+.view-details {
+  background: #3b82f6;
 }
 
 .license {

@@ -13,6 +13,18 @@ export const useStrapi = () => {
     }
   };
 
+  const getPlugin = async (id: string) => {
+    try {
+      const response = await fetch(`${STRAPI_URL}/plugins/${id}?populate=*`);
+      if (!response.ok) throw new Error('Failed to fetch plugin');
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error('Error fetching plugin:', error);
+      return null;
+    }
+  };
+
   const fetchProjects = async () => {
     try {
       const response = await fetch(`${STRAPI_URL}/projects?populate=*`);
@@ -22,6 +34,18 @@ export const useStrapi = () => {
     } catch (error) {
       console.error('Error fetching projects:', error);
       return [];
+    }
+  };
+
+  const getProject = async (id: string) => {
+    try {
+      const response = await fetch(`${STRAPI_URL}/projects/${id}?populate=*`);
+      if (!response.ok) throw new Error('Failed to fetch project');
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error('Error fetching project:', error);
+      return null;
     }
   };
 
@@ -39,7 +63,9 @@ export const useStrapi = () => {
 
   return {
     fetchPlugins,
+    getPlugin,
     fetchProjects,
+    getProject,
     fetchSocialLinks,
   };
 };
