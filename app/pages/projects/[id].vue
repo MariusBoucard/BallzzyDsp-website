@@ -10,7 +10,7 @@
 
     <div v-else-if="project" class="project-container">
       <div class="project-header">
-        <div v-if="project.image" class="project-image">
+        dsqsdqsqdsqdsqd        <div v-if="project.image" class="project-image">
           <img :src="getImageUrl(project.image)" :alt="project.editor" />
         </div>
 
