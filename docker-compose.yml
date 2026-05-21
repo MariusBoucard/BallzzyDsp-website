@@ -21,9 +21,9 @@ services:
     ports:
       - "1337:1337"
     volumes:
-      - ./BallzzyDspCMS/data:/app/data
+      - ./BallzzyDspCMS/data:/opt/app/data   # ← match the Dockerfile WORKDIR
     environment:
-      DATABASE_FILENAME: /app/data/data.db
+      DATABASE_FILENAME: /opt/app/data/data.db  # ← same path
     networks:
       - app-network
 
