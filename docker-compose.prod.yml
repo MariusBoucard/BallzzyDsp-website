@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile        # your existing frontend Dockerfile
+    restart: always
+    ports:
+      - "8080:3000"
+    environment:
+      NITRO_PORT: 3000
+      NUXT_STRAPI_URL: http://strapi:1337/api
+      NUXT_PUBLIC_STRAPI_URL: http://localhost:1337/api
+    depends_on:
+      strapi:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  strapi:
+    build:
+      context: ./BallzzyDspCMS
+      dockerfile: Dockerfile.prod
+    restart: always
+    env_file:
+      - ./BallzzyDspCMS/.env
+    environment:
+      NODE_ENV: production
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: strapi
+      DATABASE_USERNAME: strapi
+      DATABASE_PASSWORD: strapi
+      DATABASE_SSL: false
+    ports:
+      - "127.0.0.1:1337:1337"   # only accessible from localhost, not exposed publicly
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: strapi
+      POSTGRES_USER: strapi
+      POSTGRES_PASSWORD: strapi
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U strapi -d strapi"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
