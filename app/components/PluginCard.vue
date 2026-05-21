@@ -1,8 +1,8 @@
 <template>
   <NuxtLink :to="`/plugins/${plugin.id}`" class="plugin-card-link">
     <div class="card plugin-card">
-      <div v-if="plugin.image" class="plugin-image">
-        <img :src="getImageUrl(plugin.image)" :alt="plugin.editor" />
+      <div v-if="plugin.imageUrl" class="plugin-image">
+        <img :src="plugin.imageUrl" :alt="plugin.editor" loading="lazy" />
       </div>
       
       <div class="plugin-content">
@@ -39,6 +39,7 @@ interface Plugin {
   id: string;
   editor: string;
   description: string;
+  imageUrl?: string;
   image?: any;
   downloadLink?: string;
   releaseDate?: string;
@@ -51,12 +52,6 @@ interface Plugin {
 defineProps<{
   plugin: Plugin;
 }>();
-
-const getImageUrl = (image: any) => {
-  if (!image) return '';
-  if (image.url) return `http://strapi:3000${image.url}`;
-  return image;
-};
 
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString('en-US', {

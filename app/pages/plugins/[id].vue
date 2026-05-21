@@ -13,8 +13,8 @@
 
     <div v-else-if="plugin" class="card plugin-container">
       <div class="plugin-header">
-        <div v-if="plugin.image" class="plugin-image">
-          <img :src="getImageUrl(plugin.image)" :alt="plugin.editor" />
+        <div v-if="plugin?.imageUrl" class="plugin-image">
+          <img :src="plugin.imageUrl" :alt="plugin.editor" loading="lazy" />
         </div>
 
         <div class="plugin-info">
@@ -87,12 +87,6 @@ onMounted(async () => {
   plugin.value = await getPlugin(id);
   loading.value = false;
 });
-
-const getImageUrl = (image: any) => {
-  if (!image) return '';
-  if (image.url) return `http://localhost:3000${image.url}`;
-  return image;
-};
 
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString('en-US', {

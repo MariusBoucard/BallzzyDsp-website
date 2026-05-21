@@ -1,8 +1,8 @@
 <template>
   <NuxtLink :to="`/projects/${project.id}`" class="project-card-link">
     <div class="card secondary project-card">
-      <div v-if="project.image" class="project-image">
-        <img :src="getImageUrl(project.image)" :alt="project.editor" />
+      <div v-if="project.imageUrl" class="project-image">
+        <img :src="project.imageUrl" :alt="project.editor" loading="lazy" />
       </div>
       
       <div class="project-content">
@@ -42,6 +42,7 @@ interface Project {
   id: string;
   editor: string;
   description: string;
+  imageUrl?: string;
   image?: any;
   downloadLink?: string;
   releaseDate?: string;
@@ -54,12 +55,6 @@ interface Project {
 defineProps<{
   project: Project;
 }>();
-
-const getImageUrl = (image: any) => {
-  if (!image) return '';
-  if (image.url) return `http://strapi:3000${image.url}`;
-  return image;
-};
 
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString('en-US', {
