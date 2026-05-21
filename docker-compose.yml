@@ -1,13 +1,14 @@
 version: '3.8'
 services:
+
   frontend:
     build: .
     ports:
       - "8080:3000"
     environment:
       NITRO_PORT: 3000
-      NUXT_STRAPI_URL: http://strapi:1337/api        # SSR: Docker internal
-      NUXT_PUBLIC_STRAPI_URL: http://localhost:1337/api  # Browser: your machine
+      NUXT_STRAPI_URL: http://strapi:1337/api
+      NUXT_PUBLIC_STRAPI_URL: http://localhost:1337/api
     depends_on:
       - strapi
     networks:
@@ -20,12 +21,41 @@ services:
       - ./BallzzyDspCMS/.env
     ports:
       - "1337:1337"
-    volumes:
-      - ./BallzzyDspCMS/data:/opt/app/data   # ← match the Dockerfile WORKDIR
+    depends_on:
+      postgres:
+        condition: service_healthy   # wait for postgres to be ready
     environment:
-      DATABASE_FILENAME: /opt/app/data/data.db  # ← same path
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: postgres        # service name = hostname in Docker network
+      DATABASE_PORT: 5432
+      DATABASE_NAME: strapi
+      DATABASE_USERNAME: strapi
+      DATABASE_PASSWORD: strapi
+      DATABASE_SSL: false
     networks:
       - app-network
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: strapi
+      POSTGRES_USER: strapi
+      POSTGRES_PASSWORD: strapi
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # named volume = persists across rebuilds
+    ports:
+      - "5432:5432"   # optional: expose if you want to inspect with a local DB client
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U strapi -d strapi"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:   # Docker manages this — survives container recreation
 
 networks:
   app-network:
