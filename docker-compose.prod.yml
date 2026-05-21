@@ -5,7 +5,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile        # your existing frontend Dockerfile
+      dockerfile: Dockerfile.prod        # your existing frontend Dockerfile
     restart: always
     ports:
       - "8080:3000"

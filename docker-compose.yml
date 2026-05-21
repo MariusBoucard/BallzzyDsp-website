@@ -5,6 +5,11 @@ services:
     build: .
     ports:
       - "8080:3000"
+    volumes:
+      - ./app:/app/app
+      - ./nuxt.config.ts:/app/nuxt.config.ts
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./public:/app/public
     environment:
       NITRO_PORT: 3000
       NUXT_STRAPI_URL: http://strapi:1337/api
