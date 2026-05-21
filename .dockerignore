@@ -1,1 +1,8 @@
 BallzzyDspCMS
+postgres_data
+# .dockerignore
+postgres_data
+node_modules
+.git
+.nuxt
+.output

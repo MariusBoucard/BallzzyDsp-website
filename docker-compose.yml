@@ -17,10 +17,17 @@ services:
   strapi:
     build:
       context: ./BallzzyDspCMS
+      dockerfile: Dockerfile
     env_file:
       - ./BallzzyDspCMS/.env
     ports:
       - "1337:1337"
+    restart: always
+    volumes:
+      - ./BallzzyDspCMS/src:/opt/app/src     
+      - ./BallzzyDspCMS/public:/opt/app/public 
+      - ./BallzzyDspCMS/data:/opt/app/data  
+
     depends_on:
       postgres:
         condition: service_healthy   # wait for postgres to be ready
@@ -43,7 +50,7 @@ services:
       POSTGRES_USER: strapi
       POSTGRES_PASSWORD: strapi
     volumes:
-      - postgres_data:/var/lib/postgresql/data  # named volume = persists across rebuilds
+      - ./postgres_data:/var/lib/postgresql/data  # named volume = persists across rebuilds
     ports:
       - "5432:5432"   # optional: expose if you want to inspect with a local DB client
     healthcheck:
@@ -53,9 +60,6 @@ services:
       retries: 10
     networks:
       - app-network
-
-volumes:
-  postgres_data:   # Docker manages this — survives container recreation
 
 networks:
   app-network:

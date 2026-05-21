@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "dfgs",
+  "info": {
+    "singularName": "dfg",
+    "pluralName": "dfgs",
+    "displayName": "dfg"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "gf": {
+      "type": "string"
+    }
+  }
+}
