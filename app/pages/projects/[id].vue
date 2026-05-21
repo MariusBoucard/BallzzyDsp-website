@@ -1,22 +1,27 @@
 <template>
   <div class="project-detail">
     <div class="back-link">
-      <NuxtLink to="/projects">&larr; Back to Projects</NuxtLink>
+      <NuxtLink to="/projects" class="nav-link">
+        <span>&larr;</span>
+        <span>Back to Projects</span>
+      </NuxtLink>
     </div>
 
     <div v-if="loading" class="loading">
-      <p>Loading project...</p>
+      <p class="text-muted">Loading project...</p>
     </div>
 
-    <div v-else-if="project" class="project-container">
+    <div v-else-if="project" class="card secondary project-container">
       <div class="project-header">
-        dsqsdqsqdsqdsqd        <div v-if="project.image" class="project-image">
+        <div v-if="project.image" class="project-image">
           <img :src="getImageUrl(project.image)" :alt="project.editor" />
         </div>
 
         <div class="project-info">
-          <h1>{{ project.editor }}</h1>
-          <p class="type">Electron App</p>
+          <h1 class="detail-title">{{ project.editor }}</h1>
+          <p class="type">
+            <span class="tag secondary">Electron App</span>
+          </p>
           
           <div v-if="project.version || project.releaseDate" class="meta">
             <span v-if="project.version" class="meta-item">v{{ project.version }}</span>
@@ -26,14 +31,14 @@
           <p v-if="project.description" class="description">{{ project.description }}</p>
 
           <div v-if="project.formats && project.formats.length" class="formats">
-            <span v-for="format in project.formats" :key="format" class="format-tag">
+            <span v-for="format in project.formats" :key="format" class="tag secondary">
               {{ format }}
             </span>
           </div>
 
           <div class="actions">
-            <a v-if="project.downloadLink" :href="project.downloadLink" class="btn btn-primary">Download</a>
-            <a v-if="project.githubRepo" :href="project.githubRepo" class="btn btn-secondary" target="_blank">
+            <a v-if="project.downloadLink" :href="project.downloadLink" class="btn btn-secondary">Download</a>
+            <a v-if="project.githubRepo" :href="project.githubRepo" class="btn btn-outline" target="_blank">
               GitHub Repository
             </a>
           </div>
@@ -49,8 +54,8 @@
     </div>
 
     <div v-else class="not-found">
-      <p>Project not found.</p>
-      <NuxtLink to="/projects">Go back to Projects</NuxtLink>
+      <p class="text-muted">Project not found.</p>
+      <NuxtLink to="/projects" class="btn btn-secondary">Go back to Projects</NuxtLink>
     </div>
   </div>
 </template>
@@ -105,73 +110,46 @@ const formatDate = (date: string) => {
 .project-detail {
   max-width: 900px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--space-8) 0;
 }
 
 .back-link {
-  margin-bottom: 2rem;
-}
-
-.back-link a {
-  color: #10b981;
-  text-decoration: none;
-  font-size: 0.95rem;
-  transition: color 0.2s;
-}
-
-.back-link a:hover {
-  color: #059669;
+  margin-bottom: var(--space-6);
 }
 
 .loading,
 .not-found {
   text-align: center;
-  padding: 3rem 1rem;
-  color: #6b7280;
+  padding: var(--space-12);
+  color: var(--color-text-tertiary);
 }
 
-.not-found a {
-  display: inline-block;
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background: #10b981;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-.not-found a:hover {
-  background: #059669;
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
 }
 
 .project-container {
-  background: white;
-  border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #e5e7eb;
 }
 
 .project-header {
   display: grid;
   grid-template-columns: 300px 1fr;
-  gap: 2rem;
-  padding: 2rem;
+  gap: var(--space-8);
+  padding: var(--space-8);
   align-items: start;
-}
-
-@media (max-width: 768px) {
-  .project-header {
-    grid-template-columns: 1fr;
-  }
 }
 
 .project-image {
   width: 100%;
   height: 300px;
-  border-radius: 8px;
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
-  background: #f3f4f6;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.05));
+  border: var(--border-width) solid var(--color-border);
 }
 
 .project-image img {
@@ -180,26 +158,22 @@ const formatDate = (date: string) => {
   object-fit: cover;
 }
 
-.project-info h1 {
-  margin: 0 0 0.5rem 0;
-  font-size: 2rem;
-  color: #111827;
+.detail-title {
+  margin: 0 0 var(--space-4) 0;
+  font-size: var(--font-3xl);
+  color: var(--color-text-primary);
 }
 
 .type {
-  margin: 0 0 1rem 0;
-  font-size: 0.875rem;
-  color: #10b981;
-  font-weight: 600;
-  text-transform: uppercase;
+  margin: 0 0 var(--space-4) 0;
 }
 
 .meta {
   display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-  font-size: 0.95rem;
-  color: #6b7280;
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
+  font-size: var(--font-sm);
+  color: var(--color-text-tertiary);
 }
 
 .meta-item {
@@ -207,87 +181,66 @@ const formatDate = (date: string) => {
 }
 
 .description {
-  margin: 0 0 1.5rem 0;
-  color: #6b7280;
-  font-size: 1rem;
-  line-height: 1.6;
+  margin: 0 0 var(--space-6) 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-base);
+  line-height: var(--line-height-relaxed);
 }
 
 .formats {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.format-tag {
-  display: inline-block;
-  background: #f3f4f6;
-  color: #374151;
-  padding: 0.4rem 0.9rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.btn {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.btn-primary {
-  background: #10b981;
-  color: white;
-}
-
-.btn-primary:hover {
-  background: #059669;
-  transform: translateY(-1px);
-}
-
-.btn-secondary {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #e5e7eb;
-}
-
-.btn-secondary:hover {
-  background: #e5e7eb;
-  transform: translateY(-1px);
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
 }
 
 .license {
   margin: 0;
-  font-size: 0.875rem;
-  color: #9ca3af;
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .project-details {
-  padding: 2rem;
-  border-top: 1px solid #e5e7eb;
+  padding: var(--space-8);
+  border-top: var(--border-width) solid var(--color-border);
 }
 
 .project-details h2 {
-  margin: 0 0 1rem 0;
-  font-size: 1.5rem;
-  color: #111827;
+  margin: 0 0 var(--space-4) 0;
+  font-size: var(--font-2xl);
+  color: var(--color-text-primary);
 }
 
 .project-details p {
   margin: 0;
-  color: #6b7280;
-  line-height: 1.6;
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+@media (max-width: 768px) {
+  .project-header {
+    grid-template-columns: 1fr;
+  }
+
+  .project-image {
+    height: 250px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
 }
 </style>

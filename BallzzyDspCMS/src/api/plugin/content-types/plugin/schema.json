@@ -11,14 +11,45 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "version": {
-      "type": "string"
-    },
-    "name": {
+    "editor": {
       "type": "string"
     },
     "description": {
       "type": "text"
+    },
+    "image": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "downloadLink": {
+      "type": "string"
+    },
+    "releaseDate": {
+      "type": "date"
+    },
+    "formats": {
+      "type": "json"
+    },
+    "version": {
+      "type": "string"
+    },
+    "githubRepo": {
+      "type": "string"
+    },
+    "license": {
+      "type": "string"
+    },
+    "compatibleOS": {
+      "type": "json"
     }
   }
 }

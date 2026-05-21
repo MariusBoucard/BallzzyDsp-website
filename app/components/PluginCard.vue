@@ -1,29 +1,29 @@
 <template>
   <NuxtLink :to="`/plugins/${plugin.id}`" class="plugin-card-link">
-    <div class="plugin-card">
+    <div class="card plugin-card">
       <div v-if="plugin.image" class="plugin-image">
         <img :src="getImageUrl(plugin.image)" :alt="plugin.editor" />
       </div>
       
       <div class="plugin-content">
-        <h3>{{ plugin.editor }}</h3>
-        <p class="description">{{ plugin.description }}</p>
+        <h3 class="card-title">{{ plugin.editor }}</h3>
+        <p class="card-description">{{ plugin.description }}</p>
         
+        <div v-if="plugin.formats && plugin.formats.length" class="formats">
+          <span v-for="format in plugin.formats" :key="format" class="tag">
+            {{ format }}
+          </span>
+        </div>
+
         <div class="meta">
           <span v-if="plugin.version" class="meta-item">v{{ plugin.version }}</span>
           <span v-if="plugin.releaseDate" class="meta-item">{{ formatDate(plugin.releaseDate) }}</span>
         </div>
 
-        <div v-if="plugin.formats && plugin.formats.length" class="formats">
-          <span v-for="format in plugin.formats" :key="format" class="format-tag">
-            {{ format }}
-          </span>
-        </div>
-
         <div class="actions">
-          <span class="btn-link view-details">View Details</span>
-          <a v-if="plugin.downloadLink" :href="plugin.downloadLink" @click.stop class="btn-link">Download</a>
-          <a v-if="plugin.githubRepo" :href="plugin.githubRepo" class="btn-link" target="_blank" @click.stop>
+          <span class="btn btn-primary btn-sm">View Details</span>
+          <a v-if="plugin.downloadLink" :href="plugin.downloadLink" @click.stop class="btn btn-secondary btn-sm">Download</a>
+          <a v-if="plugin.githubRepo" :href="plugin.githubRepo" class="btn btn-outline btn-sm" target="_blank" @click.stop>
             GitHub
           </a>
         </div>
@@ -75,105 +75,93 @@ const formatDate = (date: string) => {
 }
 
 .plugin-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.plugin-card:hover {
-  border-color: #3b82f6;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .plugin-image {
   width: 100%;
   height: 200px;
   overflow: hidden;
-  background: #f3f4f6;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 0, 128, 0.05));
+  border-bottom: var(--border-width) solid var(--color-border);
 }
 
 .plugin-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform var(--transition-base);
+}
+
+.plugin-card:hover .plugin-image img {
+  transform: scale(1.05);
 }
 
 .plugin-content {
-  padding: 1.5rem;
+  padding: var(--space-6);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
-.plugin-content h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.25rem;
-  color: #111827;
+.card-title {
+  margin: 0;
+  font-size: var(--font-xl);
+  color: var(--color-text-primary);
 }
 
-.description {
-  margin: 0 0 1rem 0;
-  color: #6b7280;
-  font-size: 0.95rem;
-  line-height: 1.5;
+.card-description {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+  line-height: var(--line-height-relaxed);
+  flex: 1;
+}
+
+.formats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
 .meta {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-  color: #9ca3af;
+  gap: var(--space-4);
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
 }
 
 .meta-item {
   display: inline-block;
 }
 
-.formats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.format-tag {
-  display: inline-block;
-  background: #f3f4f6;
-  color: #374151;
-  padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-}
-
 .actions {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.btn-link {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background: #3b82f6;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  transition: background 0.2s;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-link:hover {
-  background: #2563eb;
-}
-
-.view-details {
-  background: #3b82f6;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding-top: var(--space-3);
+  border-top: var(--border-width) solid var(--color-border);
 }
 
 .license {
   margin: 0;
-  font-size: 0.875rem;
-  color: #9ca3af;
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+  .actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
 }
 </style>

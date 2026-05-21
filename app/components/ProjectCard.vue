@@ -1,30 +1,32 @@
 <template>
   <NuxtLink :to="`/projects/${project.id}`" class="project-card-link">
-    <div class="project-card">
+    <div class="card secondary project-card">
       <div v-if="project.image" class="project-image">
         <img :src="getImageUrl(project.image)" :alt="project.editor" />
       </div>
       
       <div class="project-content">
-        <h3>{{ project.editor }}</h3>
-        <p class="type">Electron App</p>
-        <p class="description">{{ project.description }}</p>
-        
+        <h3 class="card-title">{{ project.editor }}</h3>
+        <p class="project-type">
+          <span class="tag secondary">Electron App</span>
+        </p>
+        <p class="card-description">{{ project.description }}</p>
+
+        <div v-if="project.formats && project.formats.length" class="formats">
+          <span v-for="format in project.formats" :key="format" class="tag secondary">
+            {{ format }}
+          </span>
+        </div>
+
         <div class="meta">
           <span v-if="project.version" class="meta-item">v{{ project.version }}</span>
           <span v-if="project.releaseDate" class="meta-item">{{ formatDate(project.releaseDate) }}</span>
         </div>
 
-        <div v-if="project.formats && project.formats.length" class="formats">
-          <span v-for="format in project.formats" :key="format" class="format-tag">
-            {{ format }}
-          </span>
-        </div>
-
         <div class="actions">
-          <span class="btn-link view-details">View Details</span>
-          <a v-if="project.downloadLink" :href="project.downloadLink" @click.stop class="btn-link">Download</a>
-          <a v-if="project.githubRepo" :href="project.githubRepo" class="btn-link" target="_blank" @click.stop>
+          <span class="btn btn-secondary btn-sm">View Details</span>
+          <a v-if="project.downloadLink" :href="project.downloadLink" @click.stop class="btn btn-secondary btn-sm">Download</a>
+          <a v-if="project.githubRepo" :href="project.githubRepo" class="btn btn-outline btn-sm" target="_blank" @click.stop>
             GitHub
           </a>
         </div>
@@ -76,113 +78,97 @@ const formatDate = (date: string) => {
 }
 
 .project-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.project-card:hover {
-  border-color: #10b981;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .project-image {
   width: 100%;
   height: 200px;
   overflow: hidden;
-  background: #f3f4f6;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.05));
+  border-bottom: var(--border-width) solid var(--color-border);
 }
 
 .project-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform var(--transition-base);
+}
+
+.project-card:hover .project-image img {
+  transform: scale(1.05);
 }
 
 .project-content {
-  padding: 1.5rem;
+  padding: var(--space-6);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
-.project-content h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.25rem;
-  color: #111827;
+.card-title {
+  margin: 0;
+  font-size: var(--font-xl);
+  color: var(--color-text-primary);
 }
 
-.type {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.875rem;
-  color: #10b981;
-  font-weight: 600;
-  text-transform: uppercase;
+.project-type {
+  margin: 0;
 }
 
-.description {
-  margin: 0 0 1rem 0;
-  color: #6b7280;
-  font-size: 0.95rem;
-  line-height: 1.5;
+.card-description {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+  line-height: var(--line-height-relaxed);
+  flex: 1;
+}
+
+.formats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
 .meta {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-  color: #9ca3af;
+  gap: var(--space-4);
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
 }
 
 .meta-item {
   display: inline-block;
 }
 
-.formats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.format-tag {
-  display: inline-block;
-  background: #f3f4f6;
-  color: #374151;
-  padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-}
-
 .actions {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.btn-link {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background: #10b981;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  transition: background 0.2s;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-link:hover {
-  background: #059669;
-}
-
-.view-details {
-  background: #10b981;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding-top: var(--space-3);
+  border-top: var(--border-width) solid var(--color-border);
 }
 
 .license {
   margin: 0;
-  font-size: 0.875rem;
-  color: #9ca3af;
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+  .actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
 }
 </style>

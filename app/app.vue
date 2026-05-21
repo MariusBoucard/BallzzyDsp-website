@@ -14,19 +14,7 @@ import Footer from '~/components/Footer.vue';
 </script>
 
 <style>
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
-    Arial, sans-serif;
-  background: #ffffff;
-  color: #111827;
-}
+@import '~/assets/styles/globals.css';
 
 .app {
   min-height: 100vh;
@@ -38,7 +26,7 @@ body {
   flex: 1;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: var(--space-8) var(--space-4);
   width: 100%;
 }
 </style>

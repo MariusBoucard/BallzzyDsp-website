@@ -42,34 +42,39 @@ const getIcon = (platform: string) => {
 <style scoped>
 .social-links {
   display: flex;
-  gap: 1rem;
+  gap: var(--space-3);
   flex-wrap: wrap;
 }
 
 .social-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-md);
   text-decoration: none;
-  color: #374151;
-  transition: all 0.2s;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-base);
+  background: rgba(0, 212, 255, 0.05);
 }
 
 .social-link:hover {
-  border-color: #3b82f6;
-  color: #3b82f6;
-  background: #f0f4ff;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(0, 212, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
 }
 
 .icon {
-  font-size: 1.25rem;
+  font-size: var(--font-lg);
 }
 
 .label {
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: var(--font-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 </style>

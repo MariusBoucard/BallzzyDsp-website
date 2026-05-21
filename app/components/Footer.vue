@@ -2,23 +2,24 @@
   <footer class="footer">
     <div class="footer-container">
       <div class="footer-section">
-        <h3>Ballzzy DSP</h3>
-        <p>Audio plugins and projects built with passion.</p>
+        <h3 class="footer-title">Ballzzy DSP</h3>
+        <p class="footer-desc">Audio plugins and projects built with passion and precision.</p>
       </div>
       <div class="footer-section">
-        <h4>Links</h4>
+        <h4 class="footer-subtitle">Links</h4>
         <nav class="footer-nav">
-          <NuxtLink to="/">Home</NuxtLink>
-          <NuxtLink to="/plugins">Plugins</NuxtLink>
-          <NuxtLink to="/projects">Projects</NuxtLink>
+          <NuxtLink to="/" class="footer-link">Home</NuxtLink>
+          <NuxtLink to="/plugins" class="footer-link">Plugins</NuxtLink>
+          <NuxtLink to="/projects" class="footer-link">Projects</NuxtLink>
         </nav>
       </div>
       <div class="footer-section">
-        <h4>Social</h4>
+        <h4 class="footer-subtitle">Social</h4>
         <SocialLinks v-if="socialLinks.length" :links="socialLinks" />
         <p v-else class="text-muted">Loading social links...</p>
       </div>
     </div>
+    <div class="footer-divider"></div>
     <div class="footer-bottom">
       <p>&copy; 2024 Ballzzy DSP. All rights reserved.</p>
     </div>
@@ -39,56 +40,101 @@ onMounted(async () => {
 
 <style scoped>
 .footer {
-  background: #f9fafb;
-  border-top: 1px solid #e5e7eb;
-  margin-top: 4rem;
+  background: linear-gradient(180deg, var(--color-bg-dark) 0%, var(--color-bg-darker) 100%);
+  border-top: var(--border-width) solid var(--color-border);
+  margin-top: var(--space-16);
 }
 
 .footer-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 3rem 1rem;
+  padding: var(--space-12) var(--space-4);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-8);
 }
 
-.footer-section h3,
-.footer-section h4 {
-  margin-top: 0;
+.footer-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
-.footer-section p {
-  color: #6b7280;
-  margin: 0.5rem 0;
+.footer-title {
+  font-size: var(--font-xl);
+  background: var(--color-primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.footer-subtitle {
+  font-size: var(--font-sm);
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.footer-desc {
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+  line-height: var(--line-height-relaxed);
 }
 
 .footer-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-3);
 }
 
-.footer-nav a {
-  color: #374151;
+.footer-link {
+  color: var(--color-text-secondary);
   text-decoration: none;
-  transition: color 0.2s;
+  font-size: var(--font-sm);
+  transition: color var(--transition-base);
+  position: relative;
 }
 
-.footer-nav a:hover {
-  color: #3b82f6;
+.footer-link::before {
+  content: '→';
+  margin-right: var(--space-2);
+  opacity: 0;
+  transition: opacity var(--transition-base), margin var(--transition-base);
+  color: var(--color-primary);
+}
+
+.footer-link:hover {
+  color: var(--color-primary);
+}
+
+.footer-link:hover::before {
+  opacity: 1;
+  margin-right: var(--space-3);
+}
+
+.footer-divider {
+  height: var(--border-width);
+  background: linear-gradient(90deg, transparent, var(--color-border), transparent);
+  margin: var(--space-8) 0;
 }
 
 .footer-bottom {
-  border-top: 1px solid #e5e7eb;
-  padding: 1.5rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
   text-align: center;
-  color: #6b7280;
-  font-size: 0.875rem;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.text-muted {
-  color: #9ca3af;
-  font-size: 0.875rem;
+@media (max-width: 768px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+    padding: var(--space-8) var(--space-4);
+  }
 }
 </style>

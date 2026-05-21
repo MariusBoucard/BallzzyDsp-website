@@ -1,21 +1,24 @@
 <template>
   <div class="plugin-detail">
     <div class="back-link">
-      <NuxtLink to="/plugins">&larr; Back to Plugins</NuxtLink>
+      <NuxtLink to="/plugins" class="nav-link">
+        <span>&larr;</span>
+        <span>Back to Plugins</span>
+      </NuxtLink>
     </div>
 
     <div v-if="loading" class="loading">
-      <p>Loading plugin...</p>
+      <p class="text-muted">Loading plugin...</p>
     </div>
 
-    <div v-else-if="plugin" class="plugin-container">
+    <div v-else-if="plugin" class="card plugin-container">
       <div class="plugin-header">
         <div v-if="plugin.image" class="plugin-image">
           <img :src="getImageUrl(plugin.image)" :alt="plugin.editor" />
         </div>
 
         <div class="plugin-info">
-          <h1>{{ plugin.editor }}</h1>
+          <h1 class="detail-title">{{ plugin.editor }}</h1>
           
           <div v-if="plugin.version || plugin.releaseDate" class="meta">
             <span v-if="plugin.version" class="meta-item">v{{ plugin.version }}</span>
@@ -25,14 +28,14 @@
           <p v-if="plugin.description" class="description">{{ plugin.description }}</p>
 
           <div v-if="plugin.formats && plugin.formats.length" class="formats">
-            <span v-for="format in plugin.formats" :key="format" class="format-tag">
+            <span v-for="format in plugin.formats" :key="format" class="tag">
               {{ format }}
             </span>
           </div>
 
           <div class="actions">
             <a v-if="plugin.downloadLink" :href="plugin.downloadLink" class="btn btn-primary">Download</a>
-            <a v-if="plugin.githubRepo" :href="plugin.githubRepo" class="btn btn-secondary" target="_blank">
+            <a v-if="plugin.githubRepo" :href="plugin.githubRepo" class="btn btn-outline" target="_blank">
               GitHub Repository
             </a>
           </div>
@@ -48,13 +51,17 @@
     </div>
 
     <div v-else class="not-found">
-      <p>Plugin not found.</p>
-      <NuxtLink to="/plugins">Go back to Plugins</NuxtLink>
+      <p class="text-muted">Plugin not found.</p>
+      <NuxtLink to="/plugins" class="btn btn-primary">Go back to Plugins</NuxtLink>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { useStrapi } from '~/composables/useStrapi';
+
 const route = useRoute();
 const { getPlugin } = useStrapi();
 
@@ -100,73 +107,46 @@ const formatDate = (date: string) => {
 .plugin-detail {
   max-width: 900px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--space-8) 0;
 }
 
 .back-link {
-  margin-bottom: 2rem;
-}
-
-.back-link a {
-  color: #3b82f6;
-  text-decoration: none;
-  font-size: 0.95rem;
-  transition: color 0.2s;
-}
-
-.back-link a:hover {
-  color: #2563eb;
+  margin-bottom: var(--space-6);
 }
 
 .loading,
 .not-found {
   text-align: center;
-  padding: 3rem 1rem;
-  color: #6b7280;
+  padding: var(--space-12);
+  color: var(--color-text-tertiary);
 }
 
-.not-found a {
-  display: inline-block;
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background: #3b82f6;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-.not-found a:hover {
-  background: #2563eb;
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
 }
 
 .plugin-container {
-  background: white;
-  border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #e5e7eb;
 }
 
 .plugin-header {
   display: grid;
   grid-template-columns: 300px 1fr;
-  gap: 2rem;
-  padding: 2rem;
+  gap: var(--space-8);
+  padding: var(--space-8);
   align-items: start;
-}
-
-@media (max-width: 768px) {
-  .plugin-header {
-    grid-template-columns: 1fr;
-  }
 }
 
 .plugin-image {
   width: 100%;
   height: 300px;
-  border-radius: 8px;
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
-  background: #f3f4f6;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 0, 128, 0.05));
+  border: var(--border-width) solid var(--color-border);
 }
 
 .plugin-image img {
@@ -175,18 +155,18 @@ const formatDate = (date: string) => {
   object-fit: cover;
 }
 
-.plugin-info h1 {
-  margin: 0 0 1rem 0;
-  font-size: 2rem;
-  color: #111827;
+.detail-title {
+  margin: 0 0 var(--space-4) 0;
+  font-size: var(--font-3xl);
+  color: var(--color-text-primary);
 }
 
 .meta {
   display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-  font-size: 0.95rem;
-  color: #6b7280;
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
+  font-size: var(--font-sm);
+  color: var(--color-text-tertiary);
 }
 
 .meta-item {
@@ -194,87 +174,66 @@ const formatDate = (date: string) => {
 }
 
 .description {
-  margin: 0 0 1.5rem 0;
-  color: #6b7280;
-  font-size: 1rem;
-  line-height: 1.6;
+  margin: 0 0 var(--space-6) 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-base);
+  line-height: var(--line-height-relaxed);
 }
 
 .formats {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.format-tag {
-  display: inline-block;
-  background: #f3f4f6;
-  color: #374151;
-  padding: 0.4rem 0.9rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.btn {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.btn-primary {
-  background: #3b82f6;
-  color: white;
-}
-
-.btn-primary:hover {
-  background: #2563eb;
-  transform: translateY(-1px);
-}
-
-.btn-secondary {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #e5e7eb;
-}
-
-.btn-secondary:hover {
-  background: #e5e7eb;
-  transform: translateY(-1px);
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
 }
 
 .license {
   margin: 0;
-  font-size: 0.875rem;
-  color: #9ca3af;
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .plugin-details {
-  padding: 2rem;
-  border-top: 1px solid #e5e7eb;
+  padding: var(--space-8);
+  border-top: var(--border-width) solid var(--color-border);
 }
 
 .plugin-details h2 {
-  margin: 0 0 1rem 0;
-  font-size: 1.5rem;
-  color: #111827;
+  margin: 0 0 var(--space-4) 0;
+  font-size: var(--font-2xl);
+  color: var(--color-text-primary);
 }
 
 .plugin-details p {
   margin: 0;
-  color: #6b7280;
-  line-height: 1.6;
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+@media (max-width: 768px) {
+  .plugin-header {
+    grid-template-columns: 1fr;
+  }
+
+  .plugin-image {
+    height: 250px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
 }
 </style>
