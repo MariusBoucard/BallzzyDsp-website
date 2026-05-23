@@ -11,51 +11,111 @@
       <p class="text-muted">Loading project...</p>
     </div>
 
-    <div v-else-if="project" class="card secondary project-container">
-      <div class="project-header">
-        <div v-if="project?.imageUrl" class="project-image">
+    <div v-else-if="project" class="project-container">
+      <!-- Hero Section -->
+      <section class="hero">
+        <div v-if="project?.imageUrl" class="hero-image">
           <img :src="project.imageUrl" :alt="project.editor" loading="lazy" />
         </div>
+      </section>
 
-        <div class="project-info">
-          <h1 class="detail-title">{{ project.editor }}</h1>
-          <p class="type">
-            <span class="tag secondary">Electron App</span>
-          </p>
-          
-          <div v-if="project.version || project.releaseDate" class="meta">
-            <span v-if="project.version" class="meta-item">v{{ project.version }}</span>
-            <span v-if="project.releaseDate" class="meta-item">{{ formatDate(project.releaseDate) }}</span>
+      <!-- Main Content -->
+      <section class="main-content">
+        <!-- Header -->
+        <div class="header-section">
+          <div>
+            <h1 class="project-title">{{ project.editor }}</h1>
+            <p v-if="project.description" class="project-description">{{ project.description }}</p>
+            
+            <div v-if="project.version || project.releaseDate" class="meta">
+              <span v-if="project.version" class="meta-item">
+                <strong>Version:</strong> v{{ project.version }}
+              </span>
+              <span v-if="project.releaseDate" class="meta-item">
+                <strong>Released:</strong> {{ formatDate(project.releaseDate) }}
+              </span>
+            </div>
           </div>
 
-          <p v-if="project.description" class="description">{{ project.description }}</p>
-
-          <div v-if="project.formats && project.formats.length" class="formats">
-            <span v-for="format in project.formats" :key="format" class="tag secondary">
-              {{ format }}
-            </span>
-          </div>
-
-          <div class="actions">
-            <a v-if="project.downloadLink" :href="project.downloadLink" class="btn btn-secondary">Download</a>
-            <a v-if="project.githubRepo" :href="project.githubRepo" class="btn btn-outline" target="_blank">
-              GitHub Repository
+          <div class="header-actions">
+            <a v-if="project.githubRepo" :href="project.githubRepo" class="btn btn-outline" target="_blank" @click.stop>
+              <span>→</span> GitHub
             </a>
           </div>
-
-          <p v-if="project.license" class="license">License: {{ project.license }}</p>
         </div>
-      </div>
 
-      <div v-if="project.longDescription" class="project-details">
-        <h2>Details</h2>
-        <p>{{ project.longDescription }}</p>
-      </div>
+        <!-- Grid Section for Details -->
+        <div class="details-grid">
+          <!-- Formats Section -->
+          <section v-if="project.formats && project.formats.length" class="detail-card">
+            <h2 class="section-title">Supported Formats</h2>
+            <div class="format-list">
+              <div v-for="format in project.formats" :key="format.id" class="format-badge">
+                <img v-if="getFormatLogoUrl(format)" :src="getFormatLogoUrl(format)" :alt="format.name" class="format-logo" />
+                <span>{{ format.name }}</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Operating Systems Section -->
+          <section v-if="project.formats && project.formats.length" class="detail-card">
+            <h2 class="section-title">Supported OS</h2>
+            <div class="os-list">
+              <div v-for="format in project.formats" :key="`${format.id}-os`" class="os-badge">
+                <img v-if="format.os_supported?.logo" :src="format.os_supported?.logo" :alt="format.os_supported?.name" class="os-logo" />
+                <span>{{ format.os_supported?.name }}</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Downloads Section -->
+          <section v-if="project.download_links && project.download_links.length" class="detail-card full-width">
+            <h2 class="section-title">Downloads</h2>
+            <div class="download-grid">
+              <a 
+                v-for="dl in project.download_links" 
+                :key="dl.id" 
+                :href="dl.link" 
+                @click.stop
+                class="download-card"
+                :title="`Download ${dl.format?.name || 'Format'} for ${dl.format?.os_supported?.name || 'OS'}`"
+              >
+                <div class="download-info">
+                  <span class="download-format">{{ dl.format?.name }}</span>
+                  <span class="download-os">{{ dl.format?.os_supported?.name }}</span>
+                </div>
+                <span class="download-arrow">↓</span>
+              </a>
+            </div>
+          </section>
+
+          <!-- License & Info Section -->
+          <section class="detail-card">
+            <h2 class="section-title">Information</h2>
+            <div class="info-list">
+              <div class="info-item">
+                <span class="info-label">By</span>
+                <span class="info-value">{{ project.editor }}</span>
+              </div>
+              <div v-if="project.license" class="info-item">
+                <span class="info-label">License</span>
+                <span class="info-value">{{ project.license }}</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Long Description Section -->
+          <section v-if="project.longDescription" class="detail-card full-width">
+            <h2 class="section-title">Description</h2>
+            <p class="description-text">{{ project.longDescription }}</p>
+          </section>
+        </div>
+      </section>
     </div>
 
     <div v-else class="not-found">
       <p class="text-muted">Project not found.</p>
-      <NuxtLink to="/projects" class="btn btn-secondary">Go back to Projects</NuxtLink>
+      <NuxtLink to="/projects" class="btn btn-primary">Go back to Projects</NuxtLink>
     </div>
   </div>
 </template>
@@ -68,16 +128,52 @@ import { useStrapi } from '~/composables/useStrapi';
 const route = useRoute();
 const { getProject } = useStrapi();
 
+interface Format {
+  id: number;
+  documentId: string;
+  name: string;
+  logo?: any;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  os_supported?: OsSupported;
+}
+
+interface OsSupported {
+  id: number;
+  documentId: string;
+  name: string;
+  logo?: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}
+
+interface DownloadLink {
+  id: number;
+  documentId: string;
+  os_supported?: OsSupported;
+  format?: Format;
+  link: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}
+
 interface Project {
   id: string;
+  documentId: string;
   editor: string;
   description: string;
   longDescription?: string;
+  imageUrl?: string;
   image?: any;
-  downloadLink?: string;
+  downloadLinksingle?: string;
+  download_links?: DownloadLink[];
   releaseDate?: string;
   version?: string;
-  formats?: string[];
+  formats?: Format[];
+  os_supporteds?: OsSupported[];
   githubRepo?: string;
   license?: string;
 }
@@ -98,17 +194,28 @@ const formatDate = (date: string) => {
     day: 'numeric',
   });
 };
+
+const getFormatLogoUrl = (format: Format): string => {
+  if (!format.logo) return '';
+  if (typeof format.logo === 'object' && format.logo.url) {
+    return format.logo.url;
+  }
+  if (typeof format.logo === 'string') {
+    return format.logo;
+  }
+  return '';
+};
 </script>
 
 <style scoped>
 .project-detail {
-  max-width: 900px;
-  margin: 0 auto;
   padding: var(--space-8) 0;
 }
 
 .back-link {
-  margin-bottom: var(--space-6);
+  max-width: 1200px;
+  margin: 0 auto var(--space-6) auto;
+  padding: 0 var(--space-6);
 }
 
 .loading,
@@ -125,116 +232,338 @@ const formatDate = (date: string) => {
   gap: var(--space-4);
 }
 
-.project-container {
-  overflow: hidden;
-}
-
-.project-header {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: var(--space-8);
-  padding: var(--space-8);
-  align-items: start;
-}
-
-.project-image {
+/* Hero Section */
+.hero {
   width: 100%;
-  height: 300px;
-  border-radius: var(--border-radius-lg);
+  height: 400px;
   overflow: hidden;
   background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.05));
-  border: var(--border-width) solid var(--color-border);
+  border-bottom: var(--border-width) solid var(--color-border);
 }
 
-.project-image img {
+.hero-image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.detail-title {
-  margin: 0 0 var(--space-4) 0;
-  font-size: var(--font-3xl);
-  color: var(--color-text-primary);
+/* Main Content */
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
 }
 
-.type {
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-8);
+  margin-bottom: var(--space-12);
+  padding-bottom: var(--space-8);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.project-title {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--font-4xl);
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.project-description {
   margin: 0 0 var(--space-4) 0;
+  font-size: var(--font-lg);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  max-width: 600px;
 }
 
 .meta {
   display: flex;
   gap: var(--space-6);
-  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
   font-size: var(--font-sm);
-  color: var(--color-text-tertiary);
+  color: var(--color-text-secondary);
 }
 
 .meta-item {
-  display: inline-block;
-}
-
-.description {
-  margin: 0 0 var(--space-6) 0;
-  color: var(--color-text-secondary);
-  font-size: var(--font-base);
-  line-height: var(--line-height-relaxed);
-}
-
-.formats {
-  display: flex;
-  flex-wrap: wrap;
+  display: inline-flex;
   gap: var(--space-2);
-  margin-bottom: var(--space-6);
 }
 
-.actions {
+.meta-item strong {
+  color: var(--color-text-primary);
+}
+
+.header-actions {
   display: flex;
-  flex-wrap: wrap;
   gap: var(--space-3);
-  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
 }
 
-.license {
-  margin: 0;
-  font-size: var(--font-xs);
-  color: var(--color-text-tertiary);
+/* Details Grid */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-6);
+}
+
+.details-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+/* Detail Cards */
+.detail-card {
+  background: var(--color-bg-secondary);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  transition: all var(--transition-base);
+}
+
+.detail-card:hover {
+  border-color: var(--color-border-active);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.section-title {
+  margin: 0 0 var(--space-4) 0;
+  font-size: var(--font-lg);
+  color: var(--color-text-primary);
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.project-details {
-  padding: var(--space-8);
-  border-top: var(--border-width) solid var(--color-border);
+/* Formats Section */
+.format-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
 }
 
-.project-details h2 {
-  margin: 0 0 var(--space-4) 0;
-  font-size: var(--font-2xl);
+.format-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-base);
+}
+
+.format-badge:hover {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+
+.format-logo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+/* OS Section */
+.os-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.os-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-base);
+}
+
+.os-badge:hover {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+
+.os-logo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+/* Downloads Grid */
+.download-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.download-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4);
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.05), rgba(0, 212, 255, 0.02));
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--color-text-primary);
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.download-card:hover {
+  border-color: var(--color-accent);
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.05));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 255, 136, 0.2);
+}
+
+.download-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.download-format {
+  font-weight: 600;
   color: var(--color-text-primary);
 }
 
-.project-details p {
+.download-os {
+  font-size: var(--font-sm);
+  color: var(--color-text-tertiary);
+}
+
+.download-arrow {
+  font-size: var(--font-xl);
+  color: var(--color-accent);
+  transition: transform var(--transition-base);
+}
+
+.download-card:hover .download-arrow {
+  transform: translateY(2px);
+}
+
+/* Info List */
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: var(--font-sm);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.info-value {
+  color: var(--color-text-primary);
+  font-size: var(--font-base);
+}
+
+/* Description Text */
+.description-text {
   margin: 0;
   color: var(--color-text-secondary);
   line-height: var(--line-height-relaxed);
+  font-size: var(--font-base);
 }
 
+/* Mobile Responsive */
 @media (max-width: 768px) {
-  .project-header {
-    grid-template-columns: 1fr;
-  }
-
-  .project-image {
+  .hero {
     height: 250px;
   }
 
-  .actions {
-    flex-direction: column;
+  .main-content {
+    padding: var(--space-6) var(--space-4);
   }
 
-  .btn {
+  .header-section {
+    flex-direction: column;
+    margin-bottom: var(--space-8);
+  }
+
+  .project-title {
+    font-size: var(--font-2xl);
+  }
+
+  .project-description {
+    font-size: var(--font-base);
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .download-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header-actions {
     width: 100%;
+  }
+
+  .header-actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    height: 200px;
+  }
+
+  .main-content {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .project-title {
+    font-size: var(--font-xl);
+  }
+
+  .meta {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .download-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
   }
 }
 </style>
