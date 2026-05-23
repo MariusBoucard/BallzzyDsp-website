@@ -71,9 +71,9 @@ export const useStrapi = () => {
   // Build a deep populate query string for projects
   const projectPopulateQuery = new URLSearchParams({
     'populate[image]': 'true',
-    'populate[thumbnail]': 'true',
-    'populate[tags]': 'true',
-    // Add more nested relations here as needed
+    'populate[formats][populate][logo]': 'true',
+    'populate[formats][populate][os_supported]': 'true',
+    'populate[download_links][populate][format][populate][os_supported]': 'true',
   }).toString();
 
   const fetchPlugins = async () => {
@@ -131,6 +131,10 @@ export const useStrapi = () => {
       return projects.map((project) => ({
         ...project,
         imageUrl: getImageUrl(project.image),
+        formats: project.formats?.map((format: any) => ({
+          ...format,
+          logoUrl: getImageUrl(format.logo),
+        })) ?? [],
       }));
     } catch (error) {
       console.error('Error fetching projects:', error);
@@ -138,9 +142,9 @@ export const useStrapi = () => {
     }
   };
 
-  const getProject = async (id: string) => {
+  const getProject = async (documentId: string) => {
     try {
-      const response = await fetch(`${STRAPI_URL}/projects/${id}?${projectPopulateQuery}`);
+      const response = await fetch(`${STRAPI_URL}/projects/${documentId}?${projectPopulateQuery}`);
       if (!response.ok) throw new Error('Failed to fetch project');
       const data = await response.json();
       const project = data.data.attributes
@@ -150,6 +154,10 @@ export const useStrapi = () => {
       return {
         ...project,
         imageUrl: getImageUrl(project.image),
+        formats: project.formats?.map((format: any) => ({
+          ...format,
+          logoUrl: getImageUrl(format.logo),
+        })) ?? [],
       };
     } catch (error) {
       console.error('Error fetching project:', error);
