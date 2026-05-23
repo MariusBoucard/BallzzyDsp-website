@@ -98,9 +98,9 @@ export const useStrapi = () => {
     }
   };
 
-  const getPlugin = async (id: string) => {
+  const getPlugin = async (documentId: string) => {
     try {
-      const response = await fetch(`${STRAPI_URL}/plugins/${id}?${pluginPopulateQuery}`);
+      const response = await fetch(`${STRAPI_URL}/plugins/${documentId}?${pluginPopulateQuery}`);
       if (!response.ok) throw new Error('Failed to fetch plugin');
       const data = await response.json();
       const plugin = data.data.attributes

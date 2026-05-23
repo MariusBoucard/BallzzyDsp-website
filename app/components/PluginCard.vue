@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="`/plugins/${plugin.id}`" class="plugin-card-link">
+  <NuxtLink :to="`/plugins/${plugin.documentId}`" class="plugin-card-link">
     <div class="card plugin-card">
       <div v-if="plugin.imageUrl" class="plugin-image">
         <img :src="plugin.imageUrl" :alt="plugin.editor" loading="lazy" />
@@ -98,6 +98,7 @@ interface Plugin {
   id: string;
   editor: string;
   description: string;
+  documentId: string;
   imageUrl?: string;
   image?: any;
   downloadLinksingle?: string;
