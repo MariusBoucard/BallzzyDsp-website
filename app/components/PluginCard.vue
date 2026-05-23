@@ -13,18 +13,17 @@
           <h4 class="section-title">Formats</h4>
           <div class="formats">
             <div v-for="format in plugin.formats" :key="format.id" class="format-item">
-              <img v-if="format.logo" :src="format.logo" :alt="format.name" class="logo" />
+              <img v-if="getFormatLogoUrl(format)" :src="getFormatLogoUrl(format)" :alt="format.name" class="logo" />
               <span class="format-name">{{ format.name }}</span>
             </div>
           </div>
         </div>
-
-        <div v-if="plugin.os_supporteds && plugin.os_supporteds.length" class="os-section">
+        <div v-if="plugin.formats && plugin.formats.length" class="os-section">
           <h4 class="section-title">Supported OS</h4>
           <div class="os-supporteds">
-            <div v-for="os in plugin.os_supporteds" :key="os.id" class="os-item">
-              <img v-if="os.logo" :src="os.logo" :alt="os.name" class="logo" />
-              <span class="os-name">{{ os.name }}</span>
+            <div v-for="os in plugin.formats" :key="os.id" class="os-item">
+              <img v-if="os.os_supported?.logo" :src="os.os_supported?.logo" :alt="os.os_supported?.name" class="logo" />
+              <span class="os-name">{{ os.os_supported?.name }}</span>
             </div>
           </div>
         </div>
@@ -33,13 +32,20 @@
           <span v-if="plugin.version" class="meta-item">v{{ plugin.version }}</span>
           <span v-if="plugin.releaseDate" class="meta-item">{{ formatDate(plugin.releaseDate) }}</span>
         </div>
-
-        <div class="actions">
-          <span class="btn btn-primary btn-sm">View Details</span>
-          <a v-if="plugin.downloadLink" :href="plugin.downloadLink" @click.stop class="btn btn-secondary btn-sm">Download</a>
-          <a v-if="plugin.githubRepo" :href="plugin.githubRepo" class="btn btn-outline btn-sm" target="_blank" @click.stop>
-            GitHub
-          </a>
+        <div v-if="plugin.download_links && plugin.download_links.length" class="downloads-section">
+          <h4 class="section-title">Download</h4>
+          <div class="download-buttons">
+            <a 
+              v-for="dl in plugin.download_links" 
+              :key="dl.id" 
+              :href="dl.link" 
+              @click.stop
+              class="btn btn-secondary btn-sm download-btn"
+              :title="`Download ${dl.format?.name || 'Format'} for ${dl.format?.os_supported?.name || 'OS'}`"
+            >
+              {{ dl.format?.name }} ({{ dl.format?.os_supported?.name }})
+            </a>
+          </div>
         </div>
 
         <p v-if="plugin.license" class="license">{{ plugin.license }}</p>
@@ -53,10 +59,11 @@ interface Format {
   id: number;
   documentId: string;
   name: string;
-  logo?: string;
+  logo?: any; // Can be an image object or string URL
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
+  os_supported?: OsSupported;
 }
 
 interface OsSupported {
@@ -72,8 +79,8 @@ interface OsSupported {
 interface DownloadLink {
   id: number;
   documentId: string;
-  os_supported: OsSupported;
-  format: Format;
+  os_supported?: OsSupported;
+  format?: Format;
   link: string;
   createdAt: string;
   updatedAt: string;
@@ -87,7 +94,7 @@ interface Plugin {
   imageUrl?: string;
   image?: any;
   downloadLinksingle?: string;
-  downloadLinks?: DownloadLink[];
+  download_links?: DownloadLink[];
   releaseDate?: string;
   version?: string;
   formats?: Format[];
@@ -99,6 +106,19 @@ interface Plugin {
 defineProps<{
   plugin: Plugin;
 }>();
+
+const getFormatLogoUrl = (format: Format): string => {
+  if (!format.logo) return '';
+  // Handle if logo is an object with url property (image object from API)
+  if (typeof format.logo === 'object' && format.logo.url) {
+    return format.logo.url;
+  }
+  // Handle if logo is already a string URL
+  if (typeof format.logo === 'string') {
+    return format.logo;
+  }
+  return '';
+};
 
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -240,6 +260,23 @@ const formatDate = (date: string) => {
   flex-wrap: wrap;
   padding-top: var(--space-3);
   border-top: var(--border-width) solid var(--color-border);
+}
+
+.downloads-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.download-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.download-btn {
+  flex: 1;
+  min-width: 120px;
 }
 
 .license {

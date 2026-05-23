@@ -50,15 +50,22 @@ export const useStrapi = () => {
 
   // Build a deep populate query string for plugins
   const pluginPopulateQuery = new URLSearchParams({
-    'populate[image]': 'true',
+      'populate[image]': 'true',
+  'populate[formats][populate][logo]': 'true',
+  'populate[formats][populate][os_supported]': 'true',
+  'populate[download_links][populate][format][populate][os_supported]': 'true',
+  //  'populate[os_supported][populate][logo]': 'true',
+
+   /* 'populate[image]': 'true',
     'populate[formats][populate][os_supported]': 'true',
-    //'populate[os_supported][populate][logo]': 'true',
     'populate[formats][populate][logo]': 'true',
     'populate[download_links][populate][format]': 'true',
        // 'populate[download_links][populate][format][populate][]': 'true',
+    'populate[download_links][populate][format][populate][os_supported]': 'true',
+   // 'appends[download_links][populate][format]': 'true',
 
-    'appends[formats][populate][os_supported]': 'true',
-  //  'populate[formats][populate][os_supported][populate][logo]': 'true',
+    //'appends[formats][populate][os_supported]': 'true',
+  //  'populate[formats][populate][os_supported][populate][logo]': 'true',*/
   }).toString();
 
   // Build a deep populate query string for projects
