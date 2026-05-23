@@ -48,6 +48,13 @@
           </div>
         </div>
 
+        <div class="actions">
+          <span class="btn btn-primary btn-sm">View Details</span>
+          <a v-if="plugin.githubRepo" :href="plugin.githubRepo" class="btn btn-outline btn-sm" target="_blank" @click.stop>
+            GitHub
+          </a>
+        </div>
+
         <p v-if="plugin.license" class="license">{{ plugin.license }}</p>
       </div>
     </div>
