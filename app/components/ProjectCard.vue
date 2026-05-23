@@ -32,6 +32,7 @@
         </div>
 
         <p v-if="project.license" class="license">{{ project.license }}</p>
+        dsds
       </div>
     </div>
   </NuxtLink>

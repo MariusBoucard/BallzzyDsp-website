@@ -30,14 +30,8 @@
     "name": {
       "type": "string"
     },
-    "downloadLink": {
-      "type": "string"
-    },
     "releaseDate": {
       "type": "date"
-    },
-    "formats": {
-      "type": "json"
     },
     "version": {
       "type": "string"
@@ -48,8 +42,23 @@
     "license": {
       "type": "string"
     },
-    "compatibleOS": {
-      "type": "json"
+    "os_supporteds": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::os-supported.os-supported"
+    },
+    "formats": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::format.format"
+    },
+    "downloadLinksingle": {
+      "type": "string"
+    },
+    "download_links": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::download-link.download-link"
     }
   }
 }

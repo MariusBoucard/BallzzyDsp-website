@@ -47,17 +47,43 @@ export const useStrapi = () => {
     });
   };
 
+
+  // Build a deep populate query string for plugins
+  const pluginPopulateQuery = new URLSearchParams({
+    'populate[image]': 'true',
+    'populate[formats][populate][os_supported]': 'true',
+    //'populate[os_supported][populate][logo]': 'true',
+    'populate[formats][populate][logo]': 'true',
+    'populate[download_links][populate][format]': 'true',
+       // 'populate[download_links][populate][format][populate][]': 'true',
+
+    'appends[formats][populate][os_supported]': 'true',
+  //  'populate[formats][populate][os_supported][populate][logo]': 'true',
+  }).toString();
+
+  // Build a deep populate query string for projects
+  const projectPopulateQuery = new URLSearchParams({
+    'populate[image]': 'true',
+    'populate[thumbnail]': 'true',
+    'populate[tags]': 'true',
+    // Add more nested relations here as needed
+  }).toString();
+
   const fetchPlugins = async () => {
     try {
-      const response = await fetch(`${STRAPI_URL}/plugins?populate=*`);
+      const response = await fetch(`${STRAPI_URL}/plugins?${pluginPopulateQuery}`);
       if (!response.ok) throw new Error('Failed to fetch plugins');
       const data = await response.json();
       const plugins = transformData(data.data || []);
-      
-      // Add processed image URLs to each plugin
+
       return plugins.map((plugin) => ({
         ...plugin,
         imageUrl: getImageUrl(plugin.image),
+        // formats now contains nested os_supported + logo
+        formats: plugin.formats?.map((format: any) => ({
+          ...format,
+          logoUrl: getImageUrl(format.logo),
+        })) ?? [],
       }));
     } catch (error) {
       console.error('Error fetching plugins:', error);
@@ -67,18 +93,20 @@ export const useStrapi = () => {
 
   const getPlugin = async (id: string) => {
     try {
-      const response = await fetch(`${STRAPI_URL}/plugins/${id}?populate=*`);
+      const response = await fetch(`${STRAPI_URL}/plugins/${id}?${pluginPopulateQuery}`);
       if (!response.ok) throw new Error('Failed to fetch plugin');
       const data = await response.json();
-      const plugin = data.data.attributes ? {
-        id: data.data.id,
-        ...data.data.attributes,
-        image: data.data.attributes.image,
-      } : data.data;
-      
+      const plugin = data.data.attributes
+        ? { id: data.data.id, ...data.data.attributes }
+        : data.data;
+
       return {
         ...plugin,
         imageUrl: getImageUrl(plugin.image),
+        formats: plugin.formats?.map((format: any) => ({
+          ...format,
+          logoUrl: getImageUrl(format.logo),
+        })) ?? [],
       };
     } catch (error) {
       console.error('Error fetching plugin:', error);
@@ -88,11 +116,11 @@ export const useStrapi = () => {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch(`${STRAPI_URL}/projects?populate=*`);
+      const response = await fetch(`${STRAPI_URL}/projects?${projectPopulateQuery}`);
       if (!response.ok) throw new Error('Failed to fetch projects');
       const data = await response.json();
       const projects = transformData(data.data || []);
-      
+
       return projects.map((project) => ({
         ...project,
         imageUrl: getImageUrl(project.image),
@@ -105,15 +133,13 @@ export const useStrapi = () => {
 
   const getProject = async (id: string) => {
     try {
-      const response = await fetch(`${STRAPI_URL}/projects/${id}?populate=*`);
+      const response = await fetch(`${STRAPI_URL}/projects/${id}?${projectPopulateQuery}`);
       if (!response.ok) throw new Error('Failed to fetch project');
       const data = await response.json();
-      const project = data.data.attributes ? {
-        id: data.data.id,
-        ...data.data.attributes,
-        image: data.data.attributes.image,
-      } : data.data;
-      
+      const project = data.data.attributes
+        ? { id: data.data.id, ...data.data.attributes }
+        : data.data;
+
       return {
         ...project,
         imageUrl: getImageUrl(project.image),
@@ -123,6 +149,7 @@ export const useStrapi = () => {
       return null;
     }
   };
+
 
   const fetchSocialLinks = async () => {
     try {

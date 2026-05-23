@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "os_supporteds",
+  "info": {
+    "singularName": "os-supported",
+    "pluralName": "os-supporteds",
+    "displayName": "osSupported"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  }
+}

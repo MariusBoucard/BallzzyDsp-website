@@ -11,8 +11,54 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "gf": {
+    "editor": {
       "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "releaseDate": {
+      "type": "date"
+    },
+    "version": {
+      "type": "string"
+    },
+    "githubRepo": {
+      "type": "string"
+    },
+    "license": {
+      "type": "string"
+    },
+    "os_supporteds": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::os-supported.os-supported"
+    },
+    "formats": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::format.format"
+    },
+    "downloadLink": {
+      "type": "string"
+    },
+    "download_links": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::download-link.download-link"
     }
   }
 }
