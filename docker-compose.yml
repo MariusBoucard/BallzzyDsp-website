@@ -2,11 +2,14 @@ version: '3.8'
 services:
 
   frontend:
+    image: ballzzy-frontend-develop:latest
     build: 
       context: .
       dockerfile: Dockerfile
     ports:
       - "8080:3000"
+    restart: always
+
     volumes:
       - ./app:/app/app
       - ./nuxt.config.ts:/app/nuxt.config.ts
@@ -14,7 +17,7 @@ services:
       - ./public:/app/public
     environment:
       NITRO_PORT: 3000
-      NUXT_STRAPI_URL: http://strapi:1337/api
+      NUXT_STRAPI_URL: http://localhost:1337/api
       NUXT_PUBLIC_STRAPI_URL: http://localhost:1337/api
     depends_on:
       - strapi
@@ -22,6 +25,7 @@ services:
       - app-network
 
   strapi:
+    image: ballzzy-strapi-develop:latest
     build:
       context: ./BallzzyDspCMS
       dockerfile: Dockerfile
@@ -51,7 +55,7 @@ services:
 
   postgres:
     image: postgres:16-alpine
-    restart: unless-stopped
+    restart: always
     environment:
       POSTGRES_DB: strapi
       POSTGRES_USER: strapi

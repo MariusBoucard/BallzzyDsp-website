@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "download_links",
+  "info": {
+    "singularName": "download-link",
+    "pluralName": "download-links",
+    "displayName": "downloadLink"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "os_supported": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::os-supported.os-supported"
+    },
+    "format": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::format.format"
+    },
+    "link": {
+      "type": "string"
+    }
+  }
+}

@@ -9,10 +9,24 @@
         <h3 class="card-title">{{ plugin.editor }}</h3>
         <p class="card-description">{{ plugin.description }}</p>
         
-        <div v-if="plugin.formats && plugin.formats.length" class="formats">
-          <span v-for="format in plugin.formats" :key="format" class="tag">
-            {{ format }}
-          </span>
+        <div v-if="plugin.formats && plugin.formats.length" class="formats-section">
+          <h4 class="section-title">Formats</h4>
+          <div class="formats">
+            <div v-for="format in plugin.formats" :key="format.id" class="format-item">
+              <img v-if="format.logo" :src="format.logo" :alt="format.name" class="logo" />
+              <span class="format-name">{{ format.name }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="plugin.os_supporteds && plugin.os_supporteds.length" class="os-section">
+          <h4 class="section-title">Supported OS</h4>
+          <div class="os-supporteds">
+            <div v-for="os in plugin.os_supporteds" :key="os.id" class="os-item">
+              <img v-if="os.logo" :src="os.logo" :alt="os.name" class="logo" />
+              <span class="os-name">{{ os.name }}</span>
+            </div>
+          </div>
         </div>
 
         <div class="meta">
@@ -35,16 +49,49 @@
 </template>
 
 <script setup lang="ts">
+interface Format {
+  id: number;
+  documentId: string;
+  name: string;
+  logo?: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}
+
+interface OsSupported {
+  id: number;
+  documentId: string;
+  name: string;
+  logo?: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}
+
+interface DownloadLink {
+  id: number;
+  documentId: string;
+  os_supported: OsSupported;
+  format: Format;
+  link: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}
+
 interface Plugin {
   id: string;
   editor: string;
   description: string;
   imageUrl?: string;
   image?: any;
-  downloadLink?: string;
+  downloadLinksingle?: string;
+  downloadLinks?: DownloadLink[];
   releaseDate?: string;
   version?: string;
-  formats?: string[];
+  formats?: Format[];
+  os_supporteds?: OsSupported[];
   githubRepo?: string;
   license?: string;
 }
@@ -121,6 +168,59 @@ const formatDate = (date: string) => {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+}
+
+.section-title {
+  margin: 0;
+  font-size: var(--font-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-tertiary);
+  font-weight: 600;
+}
+
+.formats-section,
+.os-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.formats,
+.os-supporteds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.format-item,
+.os-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-xs);
+  color: var(--color-text-secondary);
+  transition: background-color var(--transition-base);
+}
+
+.format-item:hover,
+.os-item:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.logo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
+
+.format-name,
+.os-name {
+  white-space: nowrap;
 }
 
 .meta {

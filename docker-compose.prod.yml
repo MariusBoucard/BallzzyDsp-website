@@ -3,6 +3,7 @@ version: '3.8'
 services:
 
   frontend:
+    image: ballzzy-website-frontend:latest
     build:
       context: .
       dockerfile: Dockerfile.prod        # your existing frontend Dockerfile
@@ -20,6 +21,7 @@ services:
       - app-network
 
   strapi:
+    image: ballzzy-website-strapi:latest
     build:
       context: ./BallzzyDspCMS
       dockerfile: Dockerfile.prod
